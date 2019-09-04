@@ -1,45 +1,41 @@
 from flask import render_template, flash, redirect, url_for
 from app import app
 from app.forms import SimForm
-import datetime
 
-
-
-posts = [
-    {
-        'author': 'Corey Schafer',
-        'title': 'Blog Post 1',
-        'content': 'First post content',
-        'date_posted': 'April 20, 2018'
-    },
-    {
-        'author': 'Jane Doe',
-        'title': 'Blog Post 2',
-        'content': 'Second post content',
-        'date_posted': 'April 21, 2018'
-    }
-]
+# posts = [
+#     {
+#         'author': 'Corey Schafer',
+#         'title': 'Blog Post 1',
+#         'content': 'First post content',
+#         'date_posted': 'April 20, 2018'
+#     },
+#     {
+#         'author': 'Jane Doe',
+#         'title': 'Blog Post 2',
+#         'content': 'Second post content',
+#         'date_posted': 'April 21, 2018'
+#     }
+# ]
 
 @app.route('/')
-@app.route('/home')
-def home():
-	return render_template('home.html', title='Home')
+@app.route('/dashboard', methods=['GET', 'POST'])
+def form():
+	form = SimForm()
+	if form.validate_on_submit():
+		flash(f'Building graph for {form.time_span.data} days...') #success, add css
+		return redirect(url_for('results'))
+	return render_template('form.html', title='Check Yo Place!', form=form)
+
 
 @app.route('/about')
 def about():
 	return render_template('about.html', title='About')
 
-@app.route('/form', methods=['GET', 'POST'])
-def form():
-	form = SimForm()
-	if form.validate_on_submit():
-		flash(f'Building graph for {form.time_span.data} days...') #success, add css
-		return redirect(url_for('about'))
-	return render_template('form.html', title='Check Yo Place!', form=form)
-
-@app.route('/simfor')
-def simfor():
-	return render_template('form.html', title=f'{form.time_span.data} sunny day(s)')
+@app.route('/results')
+def results():
+	# returned = ReturnResults()
+	# if statement
+	return render_template('results.html', title=f'{form.time_span.data} sunny day(s)')
 
 # API path route data rendered inside this route then call this route when running API 
 # hidden folders start with a . and can be used to store api keys

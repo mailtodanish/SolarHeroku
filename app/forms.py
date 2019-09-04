@@ -7,7 +7,7 @@ from wtforms import DateField
 
 class SimForm(FlaskForm):
 
-    location = StringField('Zipcode',
+    location = StringField('Address',
                         validators=[DataRequired(), Length(min=5, max=30)],
                         render_kw={'placeholder': '55555 test st, Northpole, 00001'})
     date = DateField('Start Date', format = '%m/%d/%Y', description = 'Time',
@@ -22,3 +22,15 @@ class SimForm(FlaskForm):
     # 		raise ValidationError('Please use a valid zipcode')
     	# if date.data > datetime.datetime.now():
     	# 	raise ValidationError('')
+
+class StaticForm(FlaskForm):
+# static info will also use latitude to calculate the tilt angle when displaying info
+    bill = StringField('What is your average monthly energy bill?', dsecription = 'dollar ammount',
+        validators= #should be a dollar ammount float/integer
+
+    peak_hours = RadioField('Does your utility provider charge for peak hours',
+        choices=[('Yes', 1, "No", 0)], validators=[DataRequired()])
+
+    time_zone = StringField('What is your time zone'), dsecription='GMT+/-',
+        validators=[Length(min=2, max=3)],
+        render_kw={'placeholder': '-4 for EST, -6 for MST'}
