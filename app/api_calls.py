@@ -396,9 +396,7 @@ def process(final_data, days, sunrise, sunset):
 
     sunrise_minutes = (convert_minutes(sunrise, forward=True, seconds=True) // 15)
     sunset_minutes = (convert_minutes(sunset, forward=True, seconds=True) // 15)
-    
-# the next thing you need to do is access the dictionary values and update then independantly
-    
+       
     day_dict = {}
     for day in range(1,days+1):
         day_dict[day] = final_data[final_data.Day == day]
@@ -417,41 +415,27 @@ def process(final_data, days, sunrise, sunset):
 
 # # Visualize Results
 
-def process(final_data, days, sunrise, sunset):
-    '''
-    runs the returned data on the trained model.
-    each day returns a list of W/m^2 outputs which are then used to get some relavent information for the user:
-    daily totals.
-    time needed to offset the cost of buying an array.
-    % efficency vs SW sunny locations
-    splits data into an array of each features and days to be used in plot()
-    '''
-    cols = final_data.columns.to_list()
-    feature_cols = cols[:5] + cols[-1:]
+def plot(data_dict, days):
     
-    loaded_day_model = pickle.load(open('C:\\Users\\Mark\\Documents\\DataSci\\Module 5\\day_model.pkl', 'rb'))
-    loaded_day_scaler = pickle.load(open('C:\\Users\\Mark\\Documents\\DataSci\\Module 5\\day_scaler.pkl', 'rb'))
+    '''
+    takes a feature array and plots it against the time index and 
+    time_span = days.unique
+    converts minutes in integer form into into a clock reading for ease of translation
+    '''
+    images = {}
+    y = [convert_minutes(time, forward=False, seconds=False) for time in dayz[1].index]
+    for i in range(1,days+1):
+        plt.figure(figsize=(20,10))
+        plt.plot(y, final_data[i].Output, label='Photovoltaic Energy Produced', color='orange', fillstyle='bottom', animated=True)
+        plt.xlabel('Time')
+        plt.xticks(rotation=90)
+        plt.ylabel('W/m^2')
+        plt.legend(loc='upper left')
+        plt.title(f'Day {i}')
+        plt.show();
+        images[i] = plt.savefig(f'plot{i}.png')
+    return images
 
-    sunrise_minutes = (convert_minutes(sunrise, forward=True, seconds=True) // 15)
-    sunset_minutes = (convert_minutes(sunset, forward=True, seconds=True) // 15)
-    
-# the next thing you need to do is access the dictionary values and update then independantly
-    
-    day_dict = {}
-    for day in range(1,days+1):
-        day_dict[day] = final_data[final_data.Day == day]
-        feats = day_dict[day].loc[:,feature_cols]
-        features = loaded_day_scaler.transform(feats)
-        output = loaded_day_model.predict(features)
-    #     because the government site the zenith angle was scraped from does not distingush between degrees above the horizon (+)
-    #     and degrees below the horizon (-) there is a chance that some night time data will return a small positive number
-    #     what follows is a few manipulations to make sure night time data is silenced
-        output[:sunrise_minutes] = 0
-        output[sunset_minutes:] = 0
-        output = output.clip(min=0)
-        day_dict[day]['Output'] = output
-    
-    return day_dict
 
 
 def daily_avg(results_series, sunrise, sunset):

@@ -1,22 +1,8 @@
 from flask import render_template, flash, redirect, url_for
 from app import app
 from app.forms import SimForm
+from app.api_calls import *
 import time
-
-# posts = [
-#     {
-#         'author': 'Corey Schafer',
-#         'title': 'Blog Post 1',
-#         'content': 'First post content',
-#         'date_posted': 'April 20, 2018'
-#     },
-#     {
-#         'author': 'Jane Doe',
-#         'title': 'Blog Post 2',
-#         'content': 'Second post content',
-#         'date_posted': 'April 21, 2018'
-#     }
-# ]
 
 @app.route('/')
 @app.route('/dashboard', methods=['GET', 'POST'])
@@ -37,15 +23,25 @@ def about():
 @app.route('/results', methods=['GET', 'POST'])
 def handle_data():
 	projectpath = request.form['projectFilepath']
+	# output, sunrise, sunset = loop_data_collect(projectpath.time_span.data, projectpath.location.data, projectpath.date.data)
+	# day_dict = process(output, projectpath.time_span.data, sunrise, sunset):
+	# images_dict = plot(day_dict, projectpath.time_span.data): #also shows inside the fx
+	# avg = daily_avg(results_series, sunrise, sunset)
+
 	return render_template('results.html', title=' sunny day(s)')
 
 
-# API path route data rendered inside this route then call this route when running API 
-# hidden folders start with a . and can be used to store api keys
-# possibly a route to stored csv file from web scrape
+@app.route('/images/<cropzonekey>')
+def images(cropzonekey):
+    return render_template("images.html", title=cropzonekey)
 
-
-
+@app.route('/fig/<cropzonekey>')
+def fig(cropzonekey):
+    fig = draw_polygons(cropzonekey)
+    img = StringIO()
+    fig.savefig(img)
+    img.seek(0)
+    return send_file(img, mimetype='image/png')
 # showing a matplotlib image
 # import io
 # import random

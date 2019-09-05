@@ -6,7 +6,10 @@
 <div id="loading">
   <img id="loading-image" src="static/ajax-loader.gif" alt="Loading..." />
 </div>
-<div id="plots"> html content...</div>
+
+<div id="plots"> 
+<img src="{{ url_for('fig', cropzonekey = title) }}" alt="Image Placeholder" height="100">
+</div>
 
 <script language="javascript" type="text/javascript">
      $(window).load(function() {
