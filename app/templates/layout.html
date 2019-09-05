@@ -40,7 +40,7 @@
     </header> -
     <main role="main" class="container">
       <hr>
-        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% with messages = get_flashed_messages(with_categories=false) %}
         {% if messages %}
         <ul>
             {% for message in messages %}

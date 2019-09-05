@@ -78,3 +78,19 @@ a.article-title:hover {
 .account-heading {
   font-size: 2.5rem;
 }
+
+/*plot graph results*/
+div#plots {
+    display: none;
+    }
+
+div#loading {
+    top: 200 px;
+    margin: auto;
+    position: center;
+    z-index: 1000;
+    width: 160px;
+    height: 160px;
+    background: url(ajax-loader.gif) no-repeat;
+    cursor: wait;
+    }

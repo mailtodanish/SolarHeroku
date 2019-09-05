@@ -1,11 +1,10 @@
-# space reserved for API calls code...
-
-import requests, os
+import requests, os, datetime, pickle
 import numpy as np
 import pandas as pd
-import datetime
-import pickle
 import matplotlib.pyplot as plt
+
+#geolocation package
+from opencage.geocoder import OpenCageGeocode
 
 # Web Scraping
 import json
@@ -13,15 +12,16 @@ from time import sleep, strftime
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-# where keys are stored locally
-# %store -r
+# Retrieve set environment variables
+DarkSkyKey = os.environ.get('DarkSky')
+OpenCageKey = os.environ.get('OpenCage')
 
 # string formatting notes - user inputs hardcoded for debugging
 location = '555 S Allison Pkwy, Lakewood, CO 80226'
 time_span = 2
 
 
-# clear
+# Clear
 def clear_cache():
     '''
     optional function to be used to reset the stored data.
@@ -157,14 +157,13 @@ def get_coordinates(location, df):
     accepts a string address
     outputs latitude and longitude
     '''
-    from opencage.geocoder import OpenCageGeocode
+
     
     postal_code = [int(s) for s in location.split() if s.isdigit()]
     # place_name = [str(s) for s in location.split() if not s.isdiget()]
     numbers = str(postal_code[-1])
     
-    geocoder = api_keys['open_cage_key'][0]
-    geocoder = OpenCageGeocode(geocoder)
+    geocoder = OpenCageGeocode(OpenCageKey)
 
     locate = geocoder.geocode(location)
     # returns the following
@@ -196,10 +195,8 @@ def get_coordinates(location, df):
     return df, lat, long
 
 def get_temp_log_daylight(df, lat, long, dark, time):
-    # to be updated
-    darksky = api_keys["darksky_key"][0] # this needs to be mapped to the file in the protected folder
-
-    darkSky = requests.get(f"https://api.darksky.net/forecast/{darksky}/{lat},{long},{dark}T{time}?exclude=flags,alerts, currently")
+    
+    darkSky = requests.get(f"https://api.darksky.net/forecast/{DarkSkyKey}/{lat},{long},{dark}T{time}?exclude=flags,alerts, currently")
     darkSky.status_code == requests.codes.ok
     print(f'{darkSky.status_code == requests.codes.ok}')
     darkSky_call = darkSky.json()

@@ -13,8 +13,8 @@ class SimForm(FlaskForm):
     date = DateField('Start Date', format = '%m/%d/%Y', description = 'Time',
                         render_kw={'placeholder': '06/20/2015 for June 20, 2015'})
     time_span = RadioField('Time Span', 
-                        choices=[('1','1 day'),('7','7 days'), ('30', '30 days')], 
-                        default= '1 day', validators=[DataRequired()]) # would like to set 1 as default
+                        choices=[('1','1 day'),('3','3 days'), ('7', '7 days')], 
+                        default= '1', validators=[DataRequired()]) # would like to set 1 as default
     submit = SubmitField('Run Simulation')
 
     # def validate_form(self, zipcode, date):
@@ -25,12 +25,12 @@ class SimForm(FlaskForm):
 
 class StaticForm(FlaskForm):
 # static info will also use latitude to calculate the tilt angle when displaying info
-    bill = StringField('What is your average monthly energy bill?', dsecription = 'dollar ammount',
-        validators= #should be a dollar ammount float/integer
+    bill = StringField('Average monthly energy bill?', description = 'dollar ammount',
+        validators= [])#should be a dollar ammount float/integer
 
-    peak_hours = RadioField('Does your utility provider charge for peak hours',
-        choices=[('Yes', 1, "No", 0)], validators=[DataRequired()])
+    peak_hours = RadioField('Does the utility provider charge for peak hours?',
+        description = 'peak hours', choices=[('Yes', 1, "No", 0)], validators=[DataRequired()])
 
-    time_zone = StringField('What is your time zone'), dsecription='GMT+/-',
+    time_zone = StringField('Timezone', description='GMT+/-',
         validators=[Length(min=2, max=3)],
-        render_kw={'placeholder': '-4 for EST, -6 for MST'}
+        render_kw={'placeholder': '-4 for EST, -6 for MST'})

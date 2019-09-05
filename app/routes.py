@@ -1,6 +1,7 @@
 from flask import render_template, flash, redirect, url_for
 from app import app
 from app.forms import SimForm
+import time
 
 # posts = [
 #     {
@@ -22,20 +23,22 @@ from app.forms import SimForm
 def form():
 	form = SimForm()
 	if form.validate_on_submit():
+		# date_ = form.date.data
+		# location_ = form.location.data
+		# time_span_ = form.time_span.data
 		flash(f'Building graph for {form.time_span.data} days...') #success, add css
 		return redirect(url_for('results'))
 	return render_template('form.html', title='Check Yo Place!', form=form)
-
 
 @app.route('/about')
 def about():
 	return render_template('about.html', title='About')
 
-@app.route('/results')
-def results():
-	# returned = ReturnResults()
-	# if statement
-	return render_template('results.html', title=f'{form.time_span.data} sunny day(s)')
+@app.route('/results', methods=['GET', 'POST'])
+def handle_data():
+	projectpath = request.form['projectFilepath']
+	return render_template('results.html', title=' sunny day(s)')
+
 
 # API path route data rendered inside this route then call this route when running API 
 # hidden folders start with a . and can be used to store api keys
