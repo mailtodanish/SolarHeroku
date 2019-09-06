@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, send_file
 from app import app
 from app.forms import SimForm
 from app.api_calls import *
@@ -25,19 +25,19 @@ def handle_data():
 	projectpath = request.form['projectFilepath']
 	# output, sunrise, sunset = loop_data_collect(projectpath.time_span.data, projectpath.location.data, projectpath.date.data)
 	# day_dict = process(output, projectpath.time_span.data, sunrise, sunset):
-	# images_dict = plot(day_dict, projectpath.time_span.data): #also shows inside the fx
+	# : #also shows inside the fx
 	# avg = daily_avg(results_series, sunrise, sunset)
 
 	return render_template('results.html', title=' sunny day(s)')
 
 
-@app.route('/images/<cropzonekey>')
-def images(cropzonekey):
-    return render_template("images.html", title=cropzonekey)
+@app.route('/images/<plot>')
+def images(plot):
+    return render_template("images.html", title=plot)
 
-@app.route('/fig/<cropzonekey>')
-def fig(cropzonekey):
-    fig = draw_polygons(cropzonekey)
+@app.route('/fig/<plot>')
+def fig(plot):
+    images_dict = plot(day_dict, projectpath.time_span.data)
     img = StringIO()
     fig.savefig(img)
     img.seek(0)
@@ -67,11 +67,3 @@ def fig(cropzonekey):
 
 # plot 
 # <img src="/plot.png" alt="my plot">
-
-
-# send files from a dir
-
-# from flask import send_from_directory
-# @app.route('/js/<path:path>')
-# def send_js(path):
-#     return send_from_directory('js', path)

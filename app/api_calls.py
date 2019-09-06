@@ -31,15 +31,18 @@ def clear_cache():
     return results
 
 # Time Fx
+
 def get_time(user_input = None):
     '''
     gets time in the right formats for our calls
     outputs are in strings
-    user_input takes a user input in YYYY-mm-dd format
+    user_input takes a user input in dd/mm/YYYY format
     
     '''
     if user_input:
-        units = user_input.split('-')
+        units = user_input.split('/')
+        myorder = [2, 1, 0]
+        units = [units[i] for i in myorder]
         units.append('06')
         units.append('00')
         units = [int(unit) for unit in units]
@@ -70,12 +73,12 @@ def convert_time(time_list):
 def get_next_day(date):
     '''
     time is relative, add a day.
-    accepts YYYY-mm-dd format
+    accepts dd/mm/YYYY format
     '''
-    split = date.split('-')
+    split = date.split('/')
     integers = [int(x) for x in split]
-    integers[2] += 1
-    string = '-'.join(str(num) for num in integers)
+    integers[0] += 1
+    string = '/'.join(str(num) for num in integers)
     return string
 
 def convert_minutes(time, forward = False, seconds = True):
@@ -145,7 +148,10 @@ def get_final_minutes(colon = False):
     wonky_times = [int(i) for i in wonky_times]
     return wonky_times
 
-# # building Dataframe
+
+
+# # building dataframe
+
 def get_minutes(df):
     for i in range(96):
         df.loc[i]['Minutes'] = i*15
@@ -157,28 +163,15 @@ def get_coordinates(location, df):
     accepts a string address
     outputs latitude and longitude
     '''
-
+    from opencage.geocoder import OpenCageGeocode
     
-    postal_code = [int(s) for s in location.split() if s.isdigit()]
-    # place_name = [str(s) for s in location.split() if not s.isdiget()]
-    numbers = str(postal_code[-1])
+#     postal_code = [int(s) for s in location.split() if s.isdigit()]
+#     # place_name = [str(s) for s in location.split() if not s.isdiget()]
+#     numbers = str(postal_code[-1])
     
     geocoder = OpenCageGeocode(OpenCageKey)
 
     locate = geocoder.geocode(location)
-    # returns the following
-    # [{'components': {'city': 'Bordeaux',
-    #                  'country': 'France',
-    #                  'country_code': 'fr',
-    #                  'county': 'Bordeaux',
-    #                  'house_number': '11',
-    #                  'political_union': 'European Union',
-    #                  'postcode': '33800',
-    #                  'road': 'Rue Sauteyron',
-    #                  'state': 'New Aquitaine',
-    #                  'suburb': 'Bordeaux Sud'},
-    #   'formatted': '11 Rue Sauteyron, 33800 Bordeaux, France',
-    #   'geometry': {'lat': 44.8303087, 'lng': -0.5761911}}]
 
     geometry = locate[0]['geometry']
     lat_long = list(geometry.values())
@@ -193,6 +186,7 @@ def get_coordinates(location, df):
     lat = str(lat)
     long = str(long)
     return df, lat, long
+
 
 def get_temp_log_daylight(df, lat, long, dark, time):
     
@@ -233,26 +227,23 @@ def get_solar_data(df, lat, long, date):
         #  SPA Calculator
     SPA_calc = 'https://midcdmz.nrel.gov/solpos/spa.html'
 
-    start_date_picker = '//*[@id="syr"]' #value = 2005
+    start_date_picker = '//*[@id="syr"]' 
     end_date_picker = '//*[@id="eyr"]'
     
-    start_month_drop = '//*[@id="smo"]' #select / option value =" "
-#     example_jan = '//*[@id="smo"]/option[1]' # equal to january
+    start_month_drop = '//*[@id="smo"]' 
+
     end_month_drop = '//*[@id="emo"]'
     
     start_day_drop = '//*[@id="sdy"]'
     end_day_drop = '//*[@id="edy"]'
-    
-#     address_bar = '//*[@id="address"]'
-#     submit = '/html/body/div[1]/div[9]/div[1]/input[2]'
     
     interval = '//*[@id="int"]' #set to '15'
     
     lat_box = '//*[@id="lat"]'
     long_box = '//*[@id="lon"]'
     
-    zenith_box = '//*[@id="o0"]' #make sure is True
-    azimuth_box = '//*[@id="o1"]' #make sure is true
+    zenith_box = '//*[@id="o0"]' 
+    azimuth_box = '//*[@id="o1"]' 
     
     submit = '//*[@id="content"]/div/div/center/form/table/tbody/tr[5]/td/table/tbody/tr/td[3]/input[1]'
     reset = '//*[@id="content"]/div/div/center/form/table/tbody/tr[5]/td/table/tbody/tr/td[3]/input[2]'
@@ -354,7 +345,7 @@ def loop_data_collect(time_span, location, target_date = None):
             time_list = get_time()
             print(time_list)
         sol, dark, time = convert_time(time_list)
-        print(f'Day {i+1}...{dark}...')
+        print(f'Day {i+1}...{sol}...')
         results = clear_cache()
         results = get_minutes(results)
         results, lat, long = get_coordinates(location, results)
@@ -365,9 +356,10 @@ def loop_data_collect(time_span, location, target_date = None):
         results['Day'] = i+1
         results.set_index('Minutes', inplace=True)
         cleaning_results = cleaning(results, sunrise, sunset)
-        cleaned_results = reindexing(cleaning_results) #currently toggling for minutes/dt object index
+        cleaned_results = reindexing(cleaning_results)
+        
 #         reset for next iteration
-        target_date = get_next_day(dark)
+        target_date = get_next_day(sol)
         output = output.append(cleaning_results, ignore_index=False)
         cleaning_results = None
         cleaned_results = None
@@ -377,6 +369,7 @@ def loop_data_collect(time_span, location, target_date = None):
 #pass and send error in case of a future date
 #if date flash a message to the /results template that warns the user of lowered accuracy for future dates
 
+
 #  # Check Data vs Models stored in Static folder
 
 def process(final_data, days, sunrise, sunset):
@@ -384,15 +377,13 @@ def process(final_data, days, sunrise, sunset):
     runs the returned data on the trained model.
     each day returns a list of W/m^2 outputs which are then used to get some relavent information for the user:
     daily totals.
-    time needed to offset the cost of buying an array.
-    % efficency vs SW sunny locations
-    splits data into an array of each features and days to be used in plot()
     '''
     cols = final_data.columns.to_list()
     feature_cols = cols[:5] + cols[-1:]
-    
-    loaded_day_model = pickle.load(open('C:\\Users\\Mark\\Documents\\DataSci\\Module 5\\day_model.pkl', 'rb'))
-    loaded_day_scaler = pickle.load(open('C:\\Users\\Mark\\Documents\\DataSci\\Module 5\\day_scaler.pkl', 'rb'))
+    model = os.path.join(app.instance_path, 'static', 'day_model.pkl')
+    scaler = os.path.join(app.instance_path, 'static', 'day_scaler.pkl')
+    loaded_day_model = pickle.load(open(model, 'rb'))
+    loaded_day_scaler = pickle.load(open(scaler, 'rb'))
 
     sunrise_minutes = (convert_minutes(sunrise, forward=True, seconds=True) // 15)
     sunset_minutes = (convert_minutes(sunset, forward=True, seconds=True) // 15)
@@ -418,22 +409,25 @@ def process(final_data, days, sunrise, sunset):
 def plot(data_dict, days):
     
     '''
-    takes a feature array and plots it against the time index and 
-    time_span = days.unique
+    takes a feature array and plots it against the time index for each of the days the loop was ran
+    splits data into an array of each features and days to be used in plot()
     converts minutes in integer form into into a clock reading for ease of translation
     '''
     images = {}
-    y = [convert_minutes(time, forward=False, seconds=False) for time in dayz[1].index]
+    plt.style.use('seaborn')
+    fig, ax = plt.subplots(nrows=days, ncols=1)
+    x = [convert_minutes(time, forward=False, seconds=False) for time in dayz[1].index]
+#     fig.set_xticks(rotation=90)
     for i in range(1,days+1):
         plt.figure(figsize=(20,10))
-        plt.plot(y, final_data[i].Output, label='Photovoltaic Energy Produced', color='orange', fillstyle='bottom', animated=True)
-        plt.xlabel('Time')
-        plt.xticks(rotation=90)
-        plt.ylabel('W/m^2')
-        plt.legend(loc='upper left')
-        plt.title(f'Day {i}')
-        plt.show();
-        images[i] = plt.savefig(f'plot{i}.png')
+        ax[i-1].plot(x, final_data[i].Output, label='Photovoltaic Energy Produced',
+                color='orange', fillstyle='bottom')
+        ax[i-1].set_xlabel('Time')
+        ax[i-1].set_ylabel('W/m^2')
+        ax[i-1].legend(loc='upper left')
+        ax[i-1].set_title(f'Day {i}')
+    plt.show();
+    fig.savefig("sun_plot.png")
     return images
 
 
