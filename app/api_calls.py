@@ -187,7 +187,18 @@ def get_coordinates(location, df):
     long = str(long)
     return df, lat, long
 
-
+def temp_converter(temp, f_to_c=True):
+    '''
+    helper function
+    converts an integer or float to degrees Celsius
+    or vice verse
+    '''
+    if f_to_c:
+        new_temp = (temp - 32) * 5/9
+    else:
+        new_temp = (temp * 5/9) + 32
+    return new_temp
+    
 def get_temp_log_daylight(df, lat, long, dark, time):
     
     darkSky = requests.get(f"https://api.darksky.net/forecast/{DarkSkyKey}/{lat},{long},{dark}T{time}?exclude=flags,alerts, currently")
