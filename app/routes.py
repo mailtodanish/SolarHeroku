@@ -23,9 +23,8 @@ def about():
 @app.route('/results', methods=['GET', 'POST'])
 def handle_data():
 	projectpath = request.form['projectFilepath']
-	# output, sunrise, sunset = loop_data_collect(projectpath.time_span.data, projectpath.location.data, projectpath.date.data)
-	# day_dict = process(output, projectpath.time_span.data, sunrise, sunset):
-	# : #also shows inside the fx
+	output, sunrise, sunset = loop_data_collect(projectpath.time_span.data, projectpath.location.data, projectpath.date.data)
+	day_dict = process(output, projectpath.time_span.data, sunrise, sunset):
 	# avg = daily_avg(results_series, sunrise, sunset)
 
 	return render_template('results.html', title=' sunny day(s)')
