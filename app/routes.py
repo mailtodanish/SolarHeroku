@@ -13,34 +13,32 @@ def form():
 		# location_ = form.location.data
 		# time_span_ = form.time_span.data
 		flash(f'Building graph for {form.time_span.data} days...') #success, add css
-		return redirect(url_for('results'))
+		return redirect(url_for('about'))
 	return render_template('form.html', title='Check Yo Place!', form=form)
 
-@app.route('/about')
+@app.route('/about', methods=['GET', 'POST'])
 def about():
 	return render_template('about.html', title='About')
 
 @app.route('/results', methods=['GET', 'POST'])
 def handle_data():
-	projectpath = request.form['projectFilepath']
-	output, sunrise, sunset = loop_data_collect(projectpath.time_span.data, projectpath.location.data, projectpath.date.data)
-	day_dict = process(output, projectpath.time_span.data, sunrise, sunset)
-	# avg = daily_avg(results_series, sunrise, sunset)
-
+	projectpath = request.form
+	output, sunrise, sunset = loop_data_collect(int(request.form['time_span']), request.form['location'], request.form['date'])
+	day_dict = process(output, int(request.form['time_span'], sunrise, sunset)
 	return render_template('results.html', title=' sunny day(s)')
 
 
-@app.route('/images/<plot>')
-def images(plot):
-    return render_template("images.html", title=plot)
+# @app.route('/images/<plot>')
+# def images(plot):
+#     return render_template("images.html", title=plot)
 
-@app.route('/fig/<plot>')
-def fig(plot):
-    images_dict = plot(day_dict, projectpath.time_span.data)
-    img = StringIO()
-    fig.savefig(img)
-    img.seek(0)
-    return send_file(img, mimetype='image/png')
+# @app.route('/fig/<plot>')
+# def fig(plot):
+#     images_dict = plot(day_dict, projectpath.time_span.data)
+#     img = StringIO()
+#     fig.savefig(img)
+#     img.seek(0)
+#     return send_file(img, mimetype='image/png')
 # showing a matplotlib image
 # import io
 # import random
