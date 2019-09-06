@@ -2,7 +2,7 @@ import requests, os, datetime, pickle
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
+import pickle
 #geolocation package
 from opencage.geocoder import OpenCageGeocode
 
@@ -12,39 +12,30 @@ from time import sleep, strftime
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-# 
-
 # Retrieve set environment variables
-DarkSkyKey = os.environ.get('DarkSky')
-OpenCageKey = os.environ.get('OpenCage')
+DarkSkyKey = "67ea5b58bde0e53adb5d1b0cf7c94395"
+OpenCageKey = "227274f48bf449628de5ceeeacfbf6a7"
+# DarkSkyKey = os.environ.get('DarkSky')
+# OpenCageKey = os.environ.get('OpenCage')
 
 # string formatting notes - user inputs hardcoded for debugging
-# location = '555 S Allison Pkwy, Lakewood, CO 80226'
-# time_span = 2
+location = '555 S Allison Pkwy, Lakewood, CO 80226'
+time_span = 2
 
 
-# Clear
-def clear_cache():
-    '''
-    optional function to be used to reset the stored data.
-    '''
-    results = pd.DataFrame(columns = ['Zenith Angle [degrees]', 'Azimuth Angle [degrees]', 'Latitude [deg]',
-       'Longitude [deg]', 'Temp [deg C]', 'Minutes', 'Time Index'], index=range(96))
-    return results
 
 # Time Fx
-
 def get_time(user_input = None):
     '''
     gets time in the right formats for our calls
     outputs are in strings
-    user_input takes a user input in dd/mm/YYYY format
+    user_input takes a user input in mm/dd/YYYY format
     
     '''
     if user_input:
+        
         units = user_input.split('/')
-        myorder = [2, 0, 1]
-        units = [units[i] for i in myorder]
+        print(units)
         units.append('06')
         units.append('00')
         units = [int(unit) for unit in units]
@@ -69,18 +60,18 @@ def convert_time(time_list):
     '''
     time = (f'{time_list[3]}:{time_list[4]}:00') 
     solartopo_date = (f'{time_list[2]}/{time_list[1]}/{time_list[0]}')    
-    darksky_date = (f'{time_list[0]}-{time_list[1]}-{time_list[2]}')
+    darksky_date = (f'{time_list[2]}-{time_list[1]}-{time_list[0]}')
     return solartopo_date, darksky_date, time
     
 def get_next_day(date):
     '''
     time is relative, add a day.
-    accepts dd/mm/YYYY format
+    accepts YYYY-mm-dd format
     '''
-    split = date.split('/')
+    split = date.split('-')
     integers = [int(x) for x in split]
-    integers[0] += 1
-    string = '/'.join(str(num) for num in integers)
+    integers[2] += 1
+    string = '-'.join(str(num) for num in integers)
     return string
 
 def convert_minutes(time, forward = False, seconds = True):
@@ -151,8 +142,17 @@ def get_final_minutes(colon = False):
     return wonky_times
 
 
+# Clear
+def clear_cache():
+    '''
+    optional function to be used to reset the stored data.
+    '''
+    results = pd.DataFrame(columns = ['Zenith Angle [degrees]', 'Azimuth Angle [degrees]', 'Latitude [deg]',
+       'Longitude [deg]', 'Temp [deg C]', 'Minutes', 'Time Index'], index=range(96))
+    return results
 
-# # building dataframe
+
+# # building Dataframe
 
 def get_minutes(df):
     for i in range(96):
@@ -165,11 +165,11 @@ def get_coordinates(location, df):
     accepts a string address
     outputs latitude and longitude
     '''
-    from opencage.geocoder import OpenCageGeocode
-    
-#     postal_code = [int(s) for s in location.split() if s.isdigit()]
-#     # place_name = [str(s) for s in location.split() if not s.isdiget()]
-#     numbers = str(postal_code[-1])
+
+    # print(location, df)
+    postal_code = [int(s) for s in location.split() if s.isdigit()]
+    # place_name = [str(s) for s in location.split() if not s.isdiget()]
+    numbers = str(postal_code[-1])
     
     geocoder = OpenCageGeocode(OpenCageKey)
 
@@ -193,21 +193,20 @@ def temp_converter(temp, f_to_c=True):
     '''
     helper function
     converts an integer or float to degrees Celsius
-    or vice versa
+    or vice verse
     '''
     if f_to_c:
-        new_temp = (temp - 32) * 5/9
+         new_temp = (temp - 32) * 5/9
     else:
-        new_temp = (temp * 5/9) + 32
+         new_temp = (temp * 5/9) + 32
     return new_temp
 
 def get_temp_log_daylight(df, lat, long, dark, time):
-    
-    darkSky = requests.get(f"https://api.darksky.net/forecast/{DarkSkyKey}/{lat},{long},{dark}T{time}?exclude=flags,alerts, currently")
-    darkSky.status_code == requests.codes.ok
-    print(f'{darkSky.status_code == requests.codes.ok}')
+
+    darkSky = requests.get(f"https://api.darksky.net/forecast/{DarkSkyKey}/{lat},{long},{dark}T{time}?exclude=flags,alerts,currently")
+
     darkSky_call = darkSky.json()
-    
+   
     #     darkSky_call['hourly']['data'][0][] = 24 temp readings on the hour every hour and front fill
     for i in range(24):
         temp = (temp_converter(float(darkSky_call['hourly']['data'][i]['temperature'])))
@@ -233,17 +232,18 @@ def get_temp_log_daylight(df, lat, long, dark, time):
 def get_solar_data(df, lat, long, date):
 #     data will key off times in 00:00:00 format
         # init web browser
-    chromedriver_path = os.path.join(app.instance_path, 'static', 'chromedriver')
+    chromedriver_path = os.path.join(app.instance_path, 'static', 'chromedriver.exe')
+    # print(chromedriver_path)
     driver = webdriver.Chrome(executable_path=chromedriver_path)
     
         #  SPA Calculator
     SPA_calc = 'https://midcdmz.nrel.gov/solpos/spa.html'
 
-    start_date_picker = '//*[@id="syr"]' 
+    start_date_picker = '//*[@id="syr"]' #value = 2005
     end_date_picker = '//*[@id="eyr"]'
     
-    start_month_drop = '//*[@id="smo"]' 
-
+    start_month_drop = '//*[@id="smo"]' #select / option value =" "
+#     example_jan = '//*[@id="smo"]/option[1]' # equal to january
     end_month_drop = '//*[@id="emo"]'
     
     start_day_drop = '//*[@id="sdy"]'
@@ -254,8 +254,8 @@ def get_solar_data(df, lat, long, date):
     lat_box = '//*[@id="lat"]'
     long_box = '//*[@id="lon"]'
     
-    zenith_box = '//*[@id="o0"]' 
-    azimuth_box = '//*[@id="o1"]' 
+    zenith_box = '//*[@id="o0"]' #make sure is True
+    azimuth_box = '//*[@id="o1"]' #make sure is true
     
     submit = '//*[@id="content"]/div/div/center/form/table/tbody/tr[5]/td/table/tbody/tr/td[3]/input[1]'
     reset = '//*[@id="content"]/div/div/center/form/table/tbody/tr[5]/td/table/tbody/tr/td[3]/input[2]'
@@ -266,15 +266,15 @@ def get_solar_data(df, lat, long, date):
     
     # fill form
     driver.find_element_by_xpath(f"{start_date_picker}").clear()
-    driver.find_element_by_xpath(f"{start_date_picker}").send_keys(f'{str(date[0])}')
+    driver.find_element_by_xpath(f"{start_date_picker}").send_keys(f'{str(date[2])}')
     driver.find_element_by_xpath(f"{end_date_picker}").clear()
-    driver.find_element_by_xpath(f"{end_date_picker}").send_keys(f'{str(date[0])}')
+    driver.find_element_by_xpath(f"{end_date_picker}").send_keys(f'{str(date[2])}')
     
     driver.find_element_by_xpath(f"{start_month_drop}/option[{int(date[1])}]").click()    
     driver.find_element_by_xpath(f"{end_month_drop}/option[{int(date[1])}]").click()
 
-    driver.find_element_by_xpath(f"{start_day_drop}/option[{int(date[2])}]").click()
-    driver.find_element_by_xpath(f"{end_day_drop}/option[{int(date[2])}]").click()
+    driver.find_element_by_xpath(f"{start_day_drop}/option[{int(date[1])}]").click()
+    driver.find_element_by_xpath(f"{end_day_drop}/option[{int(date[1])}]").click()
     
     driver.find_element_by_xpath(f"{lat_box}").clear()
     driver.find_element_by_xpath(f"{lat_box}").send_keys(f'{lat}')
@@ -285,6 +285,7 @@ def get_solar_data(df, lat, long, date):
     driver.find_element_by_xpath(f"{azimuth_box}").click()
     
     driver.find_element_by_xpath(f'{submit}').click()
+#     returns a blob of txt with comma seperation and break seperation between rows
     
     body = driver.find_element_by_xpath('/html/body/pre').text
     body2 = body.split('\n')
@@ -343,19 +344,19 @@ def loop_data_collect(time_span, location, target_date = None):
     '''
     initializes data collection and handles all args/kwargs for collections
     '''
-    
+  
     output = pd.DataFrame()
 
     
     for i in range(time_span):
         if target_date:
             time_list = get_time(target_date)
-            print(time_list)
+            # print(time_list)
         else:
             time_list = get_time()
-            print(time_list)
+            # print(time_list)
         sol, dark, time = convert_time(time_list)
-        print(f'Day {i+1}...{sol}...')
+        # print(f'Day {i+1}...{dark}...')
         results = clear_cache()
         results = get_minutes(results)
         results, lat, long = get_coordinates(location, results)
@@ -366,10 +367,9 @@ def loop_data_collect(time_span, location, target_date = None):
         results['Day'] = i+1
         results.set_index('Minutes', inplace=True)
         cleaning_results = cleaning(results, sunrise, sunset)
-        cleaned_results = reindexing(cleaning_results)
-        
+        cleaned_results = reindexing(cleaning_results) #currently toggling for minutes/dt object index
 #         reset for next iteration
-        target_date = get_next_day(sol)
+        target_date = get_next_day(dark)
         output = output.append(cleaning_results, ignore_index=False)
         cleaning_results = None
         cleaned_results = None
@@ -378,7 +378,6 @@ def loop_data_collect(time_span, location, target_date = None):
 
 #pass and send error in case of a future date
 #if date flash a message to the /results template that warns the user of lowered accuracy for future dates
-
 
 #  # Check Data vs Models stored in Static folder
 
@@ -419,25 +418,23 @@ def process(final_data, days, sunrise, sunset):
 def plot(data_dict, days):
     
     '''
-    takes a feature array and plots it against the time index for each of the days the loop was ran
-    splits data into an array of each features and days to be used in plot()
+    takes a feature array and plots it against the time index and 
+    time_span = days.unique
     converts minutes in integer form into into a clock reading for ease of translation
+    splits data into an array of each features and days to be used in plot()
     '''
     images = {}
-    plt.style.use('seaborn')
-    fig, ax = plt.subplots(nrows=days, ncols=1)
-    x = [convert_minutes(time, forward=False, seconds=False) for time in dayz[1].index]
-#     fig.set_xticks(rotation=90)
+    y = [convert_minutes(time, forward=False, seconds=False) for time in dayz[1].index]
     for i in range(1,days+1):
         plt.figure(figsize=(20,10))
-        ax[i-1].plot(x, final_data[i].Output, label='Photovoltaic Energy Produced',
-                color='orange', fillstyle='bottom')
-        ax[i-1].set_xlabel('Time')
-        ax[i-1].set_ylabel('W/m^2')
-        ax[i-1].legend(loc='upper left')
-        ax[i-1].set_title(f'Day {i}')
-    plt.show();
-    fig.savefig("sun_plot.png")
+        plt.plot(y, final_data[i].Output, label='Photovoltaic Energy Produced', color='orange', fillstyle='bottom', animated=True)
+        plt.xlabel('Time')
+        plt.xticks(rotation=90)
+        plt.ylabel('W/m^2')
+        plt.legend(loc='upper left')
+        plt.title(f'Day {i}')
+        plt.show();
+        images[i] = plt.savefig(f'plot{i}.png')
     return images
 
 

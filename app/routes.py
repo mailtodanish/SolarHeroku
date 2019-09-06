@@ -3,6 +3,7 @@ from app import app
 from app.forms import SimForm
 from app.api_calls import *
 import time
+from io import StringIO
 
 @app.route('/')
 @app.route('/dashboard', methods=['GET', 'POST'])
@@ -22,7 +23,7 @@ def about():
 
 @app.route('/results', methods=['GET', 'POST'])
 def handle_data():
-	projectpath = request.form
+	# projectpath = request.form['projectFilepath']
 	output, sunrise, sunset = loop_data_collect(int(request.form['time_span']), request.form['location'], request.form['date'])
 	day_dict = process(output, int(request.form['time_span']), sunrise, sunset)
 	return render_template('results.html', title=' sunny day(s)')
