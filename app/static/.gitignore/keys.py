@@ -1,8 +1,8 @@
 import os
 
 # Set environment variables
-os.environ['DarkSky'] = '5636a578a035055f2c69312109749387'
-os.environ['OpenCage'] = '7c7eb21a5d4449689e412939a0f9769b'
+os.environ['DarkSky'] = '**************************'
+os.environ['OpenCage'] = '*************************'
 
 # Retrieve set environment variables
 DarkSkyKey = os.environ.get('DarkSky') # USER is now set to 'user@example.com'
