@@ -17,8 +17,8 @@ DarkSkyKey = os.environ.get('DarkSky')
 OpenCageKey = os.environ.get('OpenCage')
 
 # string formatting notes - user inputs hardcoded for debugging
-location = '555 S Allison Pkwy, Lakewood, CO 80226'
-time_span = 2
+# location = '555 S Allison Pkwy, Lakewood, CO 80226'
+# time_span = 2
 
 
 # Clear
@@ -41,7 +41,7 @@ def get_time(user_input = None):
     '''
     if user_input:
         units = user_input.split('/')
-        myorder = [2, 1, 0]
+        myorder = [2, 0, 1]
         units = [units[i] for i in myorder]
         units.append('06')
         units.append('00')
@@ -191,14 +191,14 @@ def temp_converter(temp, f_to_c=True):
     '''
     helper function
     converts an integer or float to degrees Celsius
-    or vice verse
+    or vice versa
     '''
     if f_to_c:
         new_temp = (temp - 32) * 5/9
     else:
         new_temp = (temp * 5/9) + 32
     return new_temp
-    
+
 def get_temp_log_daylight(df, lat, long, dark, time):
     
     darkSky = requests.get(f"https://api.darksky.net/forecast/{DarkSkyKey}/{lat},{long},{dark}T{time}?exclude=flags,alerts, currently")
@@ -231,8 +231,7 @@ def get_temp_log_daylight(df, lat, long, dark, time):
 def get_solar_data(df, lat, long, date):
 #     data will key off times in 00:00:00 format
         # init web browser
-    Me = "Users/Mark/Downloads"
-    chromedriver_path = f'C:/{Me}/chromedriver_win32/chromedriver.exe'
+    chromedriver_path = os.path.join(app.instance_path, 'static', 'chromedriver')
     driver = webdriver.Chrome(executable_path=chromedriver_path)
     
         #  SPA Calculator
@@ -284,8 +283,6 @@ def get_solar_data(df, lat, long, date):
     driver.find_element_by_xpath(f"{azimuth_box}").click()
     
     driver.find_element_by_xpath(f'{submit}').click()
-#     returns a blob of txt with comma seperation and break seperation between rows
-    sleep(2)
     
     body = driver.find_element_by_xpath('/html/body/pre').text
     body2 = body.split('\n')
