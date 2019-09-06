@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, send_file
+from flask import render_template, flash, redirect, url_for, send_file, request
 from app import app
 from app.forms import SimForm
 from app.api_calls import *
