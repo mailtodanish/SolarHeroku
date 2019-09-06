@@ -12,6 +12,8 @@ from time import sleep, strftime
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
+# 
+
 # Retrieve set environment variables
 DarkSkyKey = os.environ.get('DarkSky')
 OpenCageKey = os.environ.get('OpenCage')
