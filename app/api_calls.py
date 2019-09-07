@@ -247,7 +247,7 @@ def get_solar_data(df, lat, long, date):
     os.environ.get('')
     chromedriver_path = os.path.join(os.getcwd(), 'app\static', 'chromedriver.exe')
     # print(chromedriver_path)
-    driver = webdriver.Chrome(executable_path=chromedriver_path)
+    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
     
         #  SPA Calculator
     SPA_calc = 'https://midcdmz.nrel.gov/solpos/spa.html'
