@@ -12,6 +12,16 @@ from time import sleep, strftime
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
+chrome_options = webdriver.ChromeOptions()
+chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--no-sandbox")
+driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+
+driver.get('https://www.google.com')
+
+print(driver.page_source)
+
 # Retrieve set environment variables
 DarkSkyKey = "67ea5b58bde0e53adb5d1b0cf7c94395"
 OpenCageKey = "227274f48bf449628de5ceeeacfbf6a7"
