@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 import pickle
 from selenium import webdriver
 from opencage.geocoder import OpenCageGeocode
-
+GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google_chrome'
+CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 # Web Scraping
 import json
 from time import sleep, strftime
@@ -13,10 +14,13 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 chrome_options = webdriver.ChromeOptions()
-chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+chrome_options.binary_location = GOOGLE_CHROME_PATH
 chrome_options.add_argument("--headless")
 chrome_options.add_argument("--no-sandbox")
-driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+
+
+
+driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
 
 driver.get('https://www.google.com')
 
@@ -247,7 +251,7 @@ def get_solar_data(df, lat, long, date):
     os.environ.get('')
     chromedriver_path = os.path.join(os.getcwd(), 'app\static', 'chromedriver.exe')
     # print(chromedriver_path)
-    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+    driver =webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
     
         #  SPA Calculator
     SPA_calc = 'https://midcdmz.nrel.gov/solpos/spa.html'
