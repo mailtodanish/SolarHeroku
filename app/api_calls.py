@@ -245,7 +245,7 @@ def get_solar_data(df, lat, long, date):
 #     data will key off times in 00:00:00 format
         # init web browser
     os.environ.get('')
-    chromedriver_path = os.path.join(os.getcwd(), 'static', 'chromedriver.exe')
+    chromedriver_path = os.path.join(os.getcwd(), 'app\static', 'chromedriver.exe')
     # print(chromedriver_path)
     driver = webdriver.Chrome(executable_path=chromedriver_path)
     
