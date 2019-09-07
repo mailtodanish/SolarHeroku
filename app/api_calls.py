@@ -5,26 +5,22 @@ import matplotlib.pyplot as plt
 import pickle
 from selenium import webdriver
 from opencage.geocoder import OpenCageGeocode
-GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google-chrome-stable'
-CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
+
 # Web Scraping
 import json
 from time import sleep, strftime
-# from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.keys import Keys
 
-# chrome_options = webdriver.ChromeOptions()
-# chrome_options.binary_location = GOOGLE_CHROME_PATH
-# chrome_options.add_argument("--headless")
-# chrome_options.add_argument("--no-sandbox")
+chrome_options = webdriver.ChromeOptions()
+chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--no-sandbox")
 
-
-# print(os.getcwd())
-driver = webdriver.PhantomJS()
-# driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH,chrome_options=chrome_options)
+driver = webdriver.Chrome(executable_path= os.environ.get("CHROMEDRIVER_PATH"),chrome_options=chrome_options)
 
 driver.get('https://www.google.com')
 
-print(driver.page_source)
+print(os.environ.get("CHROMEDRIVER_PATH"))
 
 # Retrieve set environment variables
 DarkSkyKey = "67ea5b58bde0e53adb5d1b0cf7c94395"
