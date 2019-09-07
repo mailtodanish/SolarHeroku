@@ -35,7 +35,8 @@ def get_time(user_input = None):
     if user_input:
         
         units = user_input.split('/')
-        print(units)
+        myorder = [2, 0, 1]
+        units = [units[i] for i in myorder]
         units.append('06')
         units.append('00')
         units = [int(unit) for unit in units]
@@ -57,10 +58,11 @@ def convert_time(time_list):
     turns the time_list into the correct format for specific calls
     if sol, format for solortopo.  if not, format for darksky
     returns a string
+    time_list should = [y, m, d, h, m, s]
     '''
     time = (f'{time_list[3]}:{time_list[4]}:00') 
     solartopo_date = (f'{time_list[2]}/{time_list[1]}/{time_list[0]}')    
-    darksky_date = (f'{time_list[2]}-{time_list[1]}-{time_list[0]}')
+    darksky_date = (f'{time_list[0]}-{time_list[1]}-{time_list[2]}')
     return solartopo_date, darksky_date, time
     
 def get_next_day(date):
@@ -232,7 +234,8 @@ def get_temp_log_daylight(df, lat, long, dark, time):
 def get_solar_data(df, lat, long, date):
 #     data will key off times in 00:00:00 format
         # init web browser
-    chromedriver_path = os.path.join(app.instance_path, 'static', 'chromedriver.exe')
+    os.environ.get('')
+    chromedriver_path = os.path.join(os.getcwd(), 'static', 'chromedriver.exe')
     # print(chromedriver_path)
     driver = webdriver.Chrome(executable_path=chromedriver_path)
     
@@ -389,8 +392,8 @@ def process(final_data, days, sunrise, sunset):
     cols = final_data.columns.to_list()
     feature_cols = cols[:5] + cols[-1:]
     # # marker here
-    model = os.path.join(app.instance_path, 'static', 'day_model.pkl')
-    scaler = os.path.join(app.instance_path, 'static', 'day_scaler.pkl')
+    model = os.path.join(os.getcwd(), 'static', 'day_model.pkl')
+    scaler = os.path.join(os.getcwd(), 'static', 'day_scaler.pkl')
     loaded_day_model = pickle.load(open(model, 'rb'))
     loaded_day_scaler = pickle.load(open(scaler, 'rb'))
 

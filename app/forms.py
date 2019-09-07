@@ -11,7 +11,8 @@ class SimForm(FlaskForm):
                         validators=[DataRequired(), Length(min=5, max=30)],
                         render_kw={'placeholder': '55555 test st, Northpole, 00001'})
     date = DateField('Start Date', format = '%m/%d/%Y', description = 'Time',
-                        render_kw={'placeholder': '06/20/2016 for June 20, 2016'}) #currently dd-mm-yyyy on html
+                        render_kw={'placeholder': '06/20/2016 for June 20, 2016'},
+                        validators=[DataRequired(), Length(min=10, max=10)]) #currently dd-mm-yyyy on html
     time_span = RadioField('Time Span', 
                         choices=[('1','1 day'),('3','3 days'), ('7', '7 days')], 
                         default= '1', validators=[DataRequired()]) # would like to set 1 as default

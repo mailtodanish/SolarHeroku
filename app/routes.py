@@ -14,7 +14,7 @@ def form():
 		# location_ = form.location.data
 		# time_span_ = form.time_span.data
 		flash(f'Building graph for {form.time_span.data} days...') #success, add css
-		return redirect(url_for('about'))
+		return redirect(url_for('results'))
 	return render_template('form.html', title='Check Yo Place!', form=form)
 
 @app.route('/about', methods=['GET', 'POST'])
