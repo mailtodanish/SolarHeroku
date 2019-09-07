@@ -10,16 +10,17 @@ CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 # Web Scraping
 import json
 from time import sleep, strftime
-from selenium.webdriver.common.keys import Keys
+# from selenium.webdriver.common.keys import Keys
 
-chrome_options = webdriver.ChromeOptions()
-chrome_options.binary_location = GOOGLE_CHROME_PATH
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--no-sandbox")
+# chrome_options = webdriver.ChromeOptions()
+# chrome_options.binary_location = GOOGLE_CHROME_PATH
+# chrome_options.add_argument("--headless")
+# chrome_options.add_argument("--no-sandbox")
 
 
-print(os.getcwd())
-driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH,chrome_options=chrome_options)
+# print(os.getcwd())
+driver = webdriver.PhantomJS()
+# driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH,chrome_options=chrome_options)
 
 driver.get('https://www.google.com')
 
