@@ -92,7 +92,7 @@ pytesseract==0.2.6
 python-dateutil==2.7.5
 pytz==2019.1
 
-pywinpty==0.5.5
+
 PyYAML==5.1
 pyzmq==18.0.1
 qtconsole==4.5.1
