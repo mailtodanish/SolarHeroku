@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import pickle
 from selenium import webdriver
 from opencage.geocoder import OpenCageGeocode
-GOOGLE_CHROME_PATH = "/app/.apt/usr/bin/google_chrome"
+GOOGLE_CHROME_PATH = "/app/.apt/usr/bin/google-chrome-stable"
 CHROMEDRIVER_PATH = "/app/.chromedriver/bin/chromedriver"
 # Web Scraping
 import json
