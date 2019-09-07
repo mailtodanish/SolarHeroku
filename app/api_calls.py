@@ -11,16 +11,25 @@ import json
 from time import sleep, strftime
 from selenium.webdriver.common.keys import Keys
 
-chrome_options = webdriver.ChromeOptions()
-chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--no-sandbox")
+# chrome_options = webdriver.ChromeOptions()
+# chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+# chrome_options.add_argument("--headless")
+# chrome_options.add_argument("--no-sandbox")
+CHROMEDRIVER_PATH = "/app/.chromedriver/bin/chromedriver"
 
-driver = webdriver.Chrome(executable_path= os.environ.get("CHROMEDRIVER_PATH"),chrome_options=chrome_options)
+chrome_options = webdriver.ChromeOptions()
+
+chrome_options.binary_location = '.apt/usr/bin/google-chrome-stable'
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('headless')
+
+driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
+print('browser is ready')
+# driver = webdriver.Chrome(executable_path= os.environ.get("CHROMEDRIVER_PATH"),chrome_options=chrome_options)
 
 driver.get('https://www.google.com')
 
-print(os.environ.get("CHROMEDRIVER_PATH"))
 
 # Retrieve set environment variables
 DarkSkyKey = "67ea5b58bde0e53adb5d1b0cf7c94395"
