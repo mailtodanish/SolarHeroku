@@ -351,12 +351,11 @@ def loop_data_collect(time_span, location, target_date = None):
     for i in range(time_span):
         if target_date:
             time_list = get_time(target_date)
-            # print(time_list)
         else:
             time_list = get_time()
-            # print(time_list)
+
         sol, dark, time = convert_time(time_list)
-        # print(f'Day {i+1}...{dark}...')
+
         results = clear_cache()
         results = get_minutes(results)
         results, lat, long = get_coordinates(location, results)
@@ -389,6 +388,7 @@ def process(final_data, days, sunrise, sunset):
     '''
     cols = final_data.columns.to_list()
     feature_cols = cols[:5] + cols[-1:]
+    # # marker here
     model = os.path.join(app.instance_path, 'static', 'day_model.pkl')
     scaler = os.path.join(app.instance_path, 'static', 'day_scaler.pkl')
     loaded_day_model = pickle.load(open(model, 'rb'))
@@ -455,3 +455,25 @@ def daily_avg(results_series, sunrise, sunset):
     avg = for_avg.mean()
     return avg
     
+
+
+
+
+
+# # # # #
+
+def run_sim(time_span, location, date):
+    '''
+    accepts user inputs and runs sim from data collection to processing data against model and finally plots data
+    time_span = int, location = string address
+    date = mm/dd/YYYY string
+    '''
+    output, sunrise, sunset = loop_data_collect(time_span, location, date)
+    day_dict = process(output, time_span, sunrise, sunset)
+    plot(day_dict, time_span, target_date)
+    plot_features_day1(day_dict)
+    mean_power = {}
+    for day in range(time_span):
+        mean_power[day] = daily_avg(day_dict[day+1].Output, sunrise, sunset)
+        
+    return mean_power
