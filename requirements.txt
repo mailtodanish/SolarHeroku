@@ -86,13 +86,12 @@ Pygments==2.3.1
 PyInstaller==3.4
 pymongo==3.8.0
 pyparsing==2.4.0
-pypiwin32==223
+
 pyrsistent==0.15.1
 pytesseract==0.2.6
 python-dateutil==2.7.5
 pytz==2019.1
 
-pywin32-ctypes==0.2.0
 pywinpty==0.5.5
 PyYAML==5.1
 pyzmq==18.0.1
