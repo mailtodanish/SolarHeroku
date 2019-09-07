@@ -10,7 +10,6 @@ CHROMEDRIVER_PATH = "/app/.chromedriver/bin/chromedriver"
 # Web Scraping
 import json
 from time import sleep, strftime
-from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 chrome_options = webdriver.ChromeOptions()
@@ -20,7 +19,7 @@ chrome_options.add_argument("--no-sandbox")
 
 
 
-driver = webdriver.Chrome(executable_path = CHROMEDRIVER_PATH, chrome_options=chrome_options)
+driver = webdriver.Chrome(chrome_options=chrome_options)
 
 driver.get('https://www.google.com')
 
