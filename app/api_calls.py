@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import pickle
 from selenium import webdriver
 from opencage.geocoder import OpenCageGeocode
-GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google_chrome'
-CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
+GOOGLE_CHROME_PATH = "/app/.apt/usr/bin/google_chrome"
+CHROMEDRIVER_PATH = "/app/.chromedriver/bin/chromedriver"
 # Web Scraping
 import json
 from time import sleep, strftime
@@ -20,7 +20,7 @@ chrome_options.add_argument("--no-sandbox")
 
 
 
-driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
+driver = webdriver.Chrome(executable_path = CHROMEDRIVER_PATH, chrome_options=chrome_options)
 
 driver.get('https://www.google.com')
 
