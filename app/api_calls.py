@@ -326,7 +326,7 @@ def get_solar_data(df, lat, long, date):
         count += 1
     df['Zenith Angle [degrees]'] = zenith
     df['Azimuth Angle [degrees]'] = azimuth
-    
+    print(df)
     return df
 
 
