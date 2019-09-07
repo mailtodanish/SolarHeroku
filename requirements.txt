@@ -7,3 +7,4 @@ Flask-Bootstrap==3.3.7.1
 Flask-WTF==0.14.2
 xgboost==0.90
 requests==2.22.0
+pandas==0.25.1
