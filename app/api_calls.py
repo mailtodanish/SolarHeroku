@@ -405,9 +405,12 @@ def process(final_data, days, sunrise, sunset):
     '''
     cols = final_data.columns.to_list()
     feature_cols = cols[:5] + cols[-1:]
-    # # marker here
-    model = os.path.join(os.getcwd(), 'static', 'day_model.pkl')
-    scaler = os.path.join(os.getcwd(), 'static', 'day_scaler.pkl')
+    BASE_PATH = os.path.dirname(__file__)
+    model = os.path.join(BASE_PATH, 'app\static', 'day_model.pkl')
+    scaler = os.path.join(BASE_PATH, 'app\static', 'day_scaler.pkl')
+    print("DanishModel :", model)
+#     model = os.path.join(os.getcwd(), 'static', 'day_model.pkl')
+#     scaler = os.path.join(os.getcwd(), 'static', 'day_scaler.pkl')
     loaded_day_model = pickle.load(open(model, 'rb'))
     loaded_day_scaler = pickle.load(open(scaler, 'rb'))
 
